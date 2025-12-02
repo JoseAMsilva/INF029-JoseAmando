@@ -4,7 +4,13 @@
 
 #include "trabalho2.h"
 
-int vetorPrincipal[TAM];
+typedef struct estrutra {
+    int *dados;
+    int tam;
+    int qtde;
+}estrutra;
+
+estrutra vetorPrincipal[TAM];
 
 /*
 Objetivo: criar estrutura auxiliar na posição 'posicao'.
@@ -35,6 +41,11 @@ int criarEstruturaAuxiliar(int posicao, int tamanho)
     return retorno;
 }
 
+int posValida(int posicao)
+{
+    return (posicao >= 0 && posicao <= TAM) ? 1 : 0;
+}
+
 /*
 Objetivo: inserir número 'valor' em estrutura auxiliar da posição 'posicao'
 Rertono (int)
@@ -49,9 +60,8 @@ int inserirNumeroEmEstrutura(int posicao, int valor)
     int retorno = 0;
     int existeEstruturaAuxiliar = 0;
     int temEspaco = 0;
-    int posicao_invalida = 0;
 
-    if (posicao_invalida)
+    if (posValida(posicao) == 0)
         retorno = POSICAO_INVALIDA;
     else
     {
