@@ -12,6 +12,23 @@ typedef struct estrutra {
 
 estrutra vetorPrincipal[TAM];
 
+int posValida(int posicao)
+{
+    return (posicao >= 0 && posicao < TAM) ? 1 : 0;
+}
+
+int verificaEspaco(int posicao)
+{
+    return vetorPrincipal[posicao].qtde < vetorPrincipal[posicao].tam ? 1 : 0;
+}
+
+int existeEstrutura(int posicao)
+{
+    if (!posValida(posicao))
+        return 0;
+    return (vetorPrincipal[posicao].dados != NULL) ? 1 : 0;
+}
+
 /*
 Objetivo: criar estrutura auxiliar na posição 'posicao'.
 com tamanho 'tamanho'
@@ -25,26 +42,36 @@ Rertono (int)
 */
 int criarEstruturaAuxiliar(int posicao, int tamanho)
 {
-
-    int retorno = 0;
+    posicao--;
+    
     // a posicao pode já existir estrutura auxiliar
-    retorno = JA_TEM_ESTRUTURA_AUXILIAR;
+    if (existeEstrutura(posicao))
+        return JA_TEM_ESTRUTURA_AUXILIAR;
+
     // se posição é um valor válido {entre 1 e 10}
-    retorno = POSICAO_INVALIDA;
-    // o tamanho ser muito grande
-    retorno = SEM_ESPACO_DE_MEMORIA;
+    if (!posValida(posicao))
+        return POSICAO_INVALIDA;
+
     // o tamanho nao pode ser menor que 1
-    retorno = TAMANHO_INVALIDO;
+    if (tamanho < 1)
+        return TAMANHO_INVALIDO;
+
+    // o tamanho ser muito grande
+    int *p = (int *)malloc(tamanho * sizeof(int));
+    if (p == NULL)
+        return SEM_ESPACO_DE_MEMORIA;
+
     // deu tudo certo, crie
-    retorno = SUCESSO;
-
-    return retorno;
+    else
+    {
+        free(p); // libera o ponteiro temporario
+        vetorPrincipal[posicao].dados = (int *)malloc(tamanho * sizeof(int));
+        vetorPrincipal[posicao].tam = tamanho;
+        vetorPrincipal[posicao].qtde = 0;
+        return SUCESSO;
+    }
 }
 
-int posValida(int posicao)
-{
-    return (posicao >= 0 && posicao <= TAM) ? 1 : 0;
-}
 
 /*
 Objetivo: inserir número 'valor' em estrutura auxiliar da posição 'posicao'
@@ -57,34 +84,30 @@ CONSTANTES
 */
 int inserirNumeroEmEstrutura(int posicao, int valor)
 {
-    int retorno = 0;
-    int existeEstruturaAuxiliar = 0;
-    int temEspaco = 0;
+    posicao--;
 
-    if (posValida(posicao) == 0)
-        retorno = POSICAO_INVALIDA;
+    if (!posValida(posicao))
+        return POSICAO_INVALIDA;
     else
     {
-        // testar se existe a estrutura auxiliar
-        if (existeEstruturaAuxiliar)
+        if (existeEstrutura(posicao))
         {
-            if (temEspaco)
+            if (verificaEspaco(posicao))
             {
-                //insere
-                retorno = SUCESSO;
+                vetorPrincipal[posicao].dados[vetorPrincipal[posicao].qtde] = valor;
+                vetorPrincipal[posicao].qtde++;
+                return SUCESSO;
             }
             else
             {
-                retorno = SEM_ESPACO;
+                return SEM_ESPACO;
             }
         }
         else
         {
-            retorno = SEM_ESTRUTURA_AUXILIAR;
+            return SEM_ESTRUTURA_AUXILIAR;
         }
     }
-
-    return retorno;
 }
 
 /*
@@ -275,6 +298,12 @@ Objetivo: inicializa o programa. deve ser chamado ao inicio do programa
 
 void inicializar()
 {
+    for (int i = 0; i < TAM; i++)
+    {
+        vetorPrincipal[i].dados = NULL;
+        vetorPrincipal[i].qtde = 0;
+        vetorPrincipal[i].tam = 0;
+    }
 }
 
 /*
@@ -285,4 +314,14 @@ para poder liberar todos os espaços de memória das estruturas auxiliares.
 
 void finalizar()
 {
+    for (int i = 0; i < TAM; i++)
+    {
+        if (vetorPrincipal[i].dados != NULL)
+        {
+            free(vetorPrincipal[i].dados);
+            vetorPrincipal[i].dados = NULL;
+            vetorPrincipal[i].qtde = 0;
+            vetorPrincipal[i].tam = 0;
+        }
+    }
 }
