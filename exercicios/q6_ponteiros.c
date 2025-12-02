@@ -5,10 +5,10 @@ typedef struct listaDuplamenteEncadeada {
     int valor;
     struct listaDuplamenteEncadeada *proximo;
     struct listaDuplamenteEncadeada *anterior;
-} ListaDupla;
+} item;
 
-void inserirOrdenado(ListaDupla **head, int valor){
-    ListaDupla*novo = (ListaDupla*)malloc(sizeof(ListaDupla));
+void inserirOrdenado(item **head, int valor){
+    item*novo = (item*)malloc(sizeof(item));
     novo->valor = valor;
     novo->proximo = NULL;
     novo->anterior = NULL;
@@ -16,8 +16,8 @@ void inserirOrdenado(ListaDupla **head, int valor){
         *head = novo;
     }
     else{
-        ListaDupla*atual = *head;
-        ListaDupla*anterior = NULL;
+        item*atual = *head;
+        item*anterior = NULL;
         while (atual != NULL && atual->valor < valor) {
             anterior = atual;
             atual = atual->proximo;
@@ -38,8 +38,8 @@ void inserirOrdenado(ListaDupla **head, int valor){
     }
 }
 
-void imprimirLista(ListaDupla*head){
-    ListaDupla*atual = head;
+void imprimirLista(item*head){
+    item*atual = head;
     while (atual != NULL) {
         printf("%d ", atual->valor);
         atual = atual->proximo;
@@ -47,9 +47,9 @@ void imprimirLista(ListaDupla*head){
     printf("\n");
 }
 
-void liberarLista(ListaDupla*head){
-    ListaDupla*atual = head;
-    ListaDupla*proximoNo;
+void liberarLista(item*head){
+    item*atual = head;
+    item*proximoNo;
     while (atual != NULL) {
         proximoNo = atual->proximo;
         free(atual);
@@ -57,21 +57,17 @@ void liberarLista(ListaDupla*head){
     }
 }
 int main(){
-    ListaDupla*minhaLista = NULL;
-    int n, valor;
-
-    printf("Quantos numeros deseja inserir na lista duplamente encadeada ordenada? ");
-    scanf("%d", &n);
-
-    for (int i = 0; i < n; i++) {
-        printf("Digite o numero %d: ", i + 1);
-        scanf("%d", &valor);
-        inserirOrdenado(&minhaLista, valor);
-    }
+    item*head = NULL;
+    
+    inserirOrdenado(&head, 5);
+    inserirOrdenado(&head, 2);
+    inserirOrdenado(&head, 8);
+    inserirOrdenado(&head, 1);
+    inserirOrdenado(&head, 3);
 
     printf("Lista duplamente encadeada ordenada: ");
-    imprimirLista(minhaLista);
+    imprimirLista(head);
 
-    liberarLista(minhaLista);
+    liberarLista(head);
     return 0;
 }
